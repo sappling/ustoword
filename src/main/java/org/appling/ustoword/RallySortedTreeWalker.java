@@ -29,27 +29,23 @@ public class RallySortedTreeWalker {
         if (parent.getAsJsonPrimitive("DirectChildrenCount").getAsInt() > 0) {
             QueryRequest queryRequest;
             String parentType = parent.get("_type").getAsString();
+            String id = parent.get("ObjectID").getAsString();
+
+            // Unfortunately rally denotes parentage differently for different types
             if (parentType.equals("PortfolioItem/Feature")) {
                 queryRequest = new QueryRequest("HierarchicalRequirement");
-                String id = parent.get("ObjectID").getAsString();
                 queryRequest.setQueryFilter(new QueryFilter("Feature.ObjectID", " = ", id));
-                queryRequest.setOrder("DragAndDropRank ASC");
-                queryRequest.setFetch(standardFetch);
             }
             else if (parentType.equals("HierarchicalRequirement")) {
                 queryRequest = new QueryRequest("HierarchicalRequirement");
-                String id = parent.get("ObjectID").getAsString();
                 queryRequest.setQueryFilter(new QueryFilter("Parent.ObjectID", " = ", id));
-                queryRequest.setOrder("DragAndDropRank ASC");
-                queryRequest.setFetch(standardFetch);
             }
             else { // must be an Initiative
-                String id = parent.get("ObjectID").getAsString();
                 queryRequest = new QueryRequest("PortfolioItem/Feature");
                 queryRequest.setQueryFilter(new QueryFilter("Parent.ObjectID", "=", id));
-                queryRequest.setOrder("DragAndDropRank ASC");
-                queryRequest.setFetch(standardFetch);
             }
+            queryRequest.setOrder("DragAndDropRank ASC");
+            queryRequest.setFetch(standardFetch);
             QueryResponse response = null;
             try {
                 response = restApi.query(queryRequest);
