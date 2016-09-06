@@ -34,7 +34,9 @@ public class RallySortedTreeWalker {
             // Unfortunately rally denotes parentage differently for different types
             if (parentType.equals("PortfolioItem/Feature")) {
                 queryRequest = new QueryRequest("HierarchicalRequirement");
-                queryRequest.setQueryFilter(new QueryFilter("Feature.ObjectID", " = ", id));
+                // Has this feature, but no parent.  Only want the direct feature children, not grandchildren
+                queryRequest.setQueryFilter(new QueryFilter("Feature.ObjectID", "=", id)
+                        .and(new QueryFilter("Parent", "=", "null")));
             }
             else if (parentType.equals("HierarchicalRequirement")) {
                 queryRequest = new QueryRequest("HierarchicalRequirement");

@@ -47,9 +47,10 @@ public class HTMLWriter implements WalkAction {
     }
     @Override
     public void act(JsonObject obj, int depth) {
+        //for (int i=0; i<depth-1; i++)  { writer.print("\t"); }
         writer.print("<h"+depth+">");
         writer.print(obj.get("FormattedID").getAsString());
-        writer.print("&nbsp;-&nbsp;");
+        writer.print(" - ");
         writer.print(obj.get("Name").getAsString());
         writer.println("</h" + depth + ">");
 
