@@ -20,6 +20,8 @@ dependencies {
     compile 'org.apache.poi:poi-ooxml:3.10-FINAL'
     compile 'org.apache.poi:ooxml-schemas:1.1'
     */
+    compile 'org.docx4j:docx4j:3.3.1'
+    compile 'org.docx4j:docx4j-ImportXHTML:3.3.1'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.2.5'
     compile group: 'com.rallydev.rest', name: 'rally-rest-api', version: '2.2.1'
 
@@ -31,8 +33,12 @@ dependencies {
     */
 }
 
-version = '0.1'
+version = '0.2'
 mainClassName = 'org.appling.ustoword.Main'
+//mainClassName = 'org.appling.ustoword.Doctest'
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 
 // The following strangeness is to get groovy dependencies only in the test configurations
 configurations {

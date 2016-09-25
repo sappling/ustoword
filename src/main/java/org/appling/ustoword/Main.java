@@ -8,8 +8,16 @@ import com.rallydev.rest.response.GetResponse;
 import com.rallydev.rest.response.QueryResponse;
 import com.rallydev.rest.util.Fetch;
 import com.rallydev.rest.util.QueryFilter;
+import org.docx4j.Docx4J;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.AltChunkType;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -20,12 +28,13 @@ public class Main {
     static public void main(String args[]) {
         boolean useProxy = true;
 
-        if (args.length < 1) {
-            System.err.println("Syntax is ustoword.bat <Initiative ID like I101> [noproxy optional]");
+        if (args.length < 2) {
+            System.err.println("Syntax is ustoword.bat <Initiative ID like I101> <output file name> [noproxy optional]");
             System.exit(-1);
         }
-        if (args.length == 2) {
-            if (args[1].equalsIgnoreCase("noproxy")) {
+
+        if (args.length == 3) {
+            if (args[2].equalsIgnoreCase("noproxy")) {
                 useProxy = false;
             }
         }
@@ -37,6 +46,7 @@ public class Main {
         }
 
         String ID = args[0];
+        String outName = args[1];
         try {
             RallyRestApi restApi = new RallyRestApi(new URI("https://rally1.rallydev.com"), rally_key);
             if (useProxy) {
@@ -55,7 +65,8 @@ public class Main {
             if (queryResponse.wasSuccessful()) {
                 JsonArray resultArray = queryResponse.getResults();
                 JsonElement jsonInitiative = resultArray.get(0);
-                HTMLWriter hwriter = new HTMLWriter(System.out);
+                StringWriter html = new StringWriter();
+                HTMLWriter hwriter = new HTMLWriter(html);
                 hwriter.writeHeader();
                 //RallyTreeWalker walker = new RallyTreeWalker(restApi);
                 RallySortedTreeWalker walker = new RallySortedTreeWalker (restApi);
@@ -63,6 +74,14 @@ public class Main {
                 hwriter.writeFooter();
 
                 //System.out.println(prettyPrintJSON(jsonInitiative));
+
+                InputStream stream = Doctest.class.getResourceAsStream("/styles.docx");
+                WordprocessingMLPackage wordMLPackage = Docx4J.load(stream);
+                MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
+
+                documentPart.addAltChunk(AltChunkType.Html, html.toString().getBytes());
+                wordMLPackage.save(new File(outName));
+
             } else {
                 System.out.println("Error:");
                 String[] errors = queryResponse.getErrors();
@@ -73,6 +92,8 @@ public class Main {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Docx4JException e) {
             e.printStackTrace();
         }
     }

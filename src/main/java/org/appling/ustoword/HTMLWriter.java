@@ -9,6 +9,7 @@ import com.rallydev.rest.RallyRestApi;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * Created by sappling on 9/5/2016.
@@ -19,6 +20,10 @@ public class HTMLWriter implements WalkAction {
 
     public HTMLWriter(OutputStream out) {
         writer = new PrintWriter(new BufferedOutputStream(out));
+    }
+
+    public HTMLWriter(Writer w) {
+        writer = new PrintWriter(w);
     }
 
     public void close() {
