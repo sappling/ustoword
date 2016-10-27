@@ -76,9 +76,11 @@ public class Main {
                 WordprocessingMLPackage wordMLPackage = Docx4J.load(stream);
                 MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
 
+                /*
                 PrintWriter w = new PrintWriter(new File("out.html"));
                 w.append(html.toString());
                 w.close();
+                */
 
                 documentPart.addAltChunk(AltChunkType.Html, html.toString().getBytes());
                 wordMLPackage.save(new File(outName));
