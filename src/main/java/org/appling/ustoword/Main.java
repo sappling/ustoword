@@ -14,10 +14,7 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.AltChunkType;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -78,6 +75,10 @@ public class Main {
                 InputStream stream = Doctest.class.getResourceAsStream("/styles.docx");
                 WordprocessingMLPackage wordMLPackage = Docx4J.load(stream);
                 MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
+
+                PrintWriter w = new PrintWriter(new File("out.html"));
+                w.append(html.toString());
+                w.close();
 
                 documentPart.addAltChunk(AltChunkType.Html, html.toString().getBytes());
                 wordMLPackage.save(new File(outName));

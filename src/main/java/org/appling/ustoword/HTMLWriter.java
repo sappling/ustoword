@@ -59,10 +59,21 @@ public class HTMLWriter implements WalkAction {
         writer.print(obj.get("Name").getAsString());
         writer.println("</h" + depth + ">");
 
-        writer.println("<div>");
+        writer.println("<div style=\""+getMargin(depth)+"\">");
         writer.println(toHTML(obj.get("Description")));
         writer.println("</div>");
 
         writer.flush();
+    }
+
+    private String getMargin(int depth) {
+        StringBuilder result = new StringBuilder();
+        if (depth > 0) {
+            double val = depth * 0.25;
+            result.append("margin-left:");
+            result.append(Double.toString(val));
+            result.append("in");
+        }
+        return result.toString();
     }
 }
